@@ -2,7 +2,7 @@ package platypus.util.general;
 
 /**
  * A collection of methods and constants relating to units of measurement.
- * 
+ *
  * @author Jingchen Xu
  */
 public class PUnitUtils {

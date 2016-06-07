@@ -22,18 +22,17 @@ import java.util.ArrayList;
  * <p>
  * Irregular behavior can occur if multiple <code>ClipboardMonitor</code>
  * threads run concurrently.
- * 
+ *
  * @author Jingchen Xu
  */
 public class ClipboardMonitor extends Thread implements ClipboardOwner {
 
-	private Clipboard sysClip = Toolkit.getDefaultToolkit()
-			.getSystemClipboard();
+	private final Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
 	private boolean end = false;
 	private boolean listening = false;
 	private String prevVal = "";
 
-	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+	private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
 	// TODO change to singleton
 
@@ -43,12 +42,13 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 
 	@Override
 	public void run() {
-		Transferable trans = sysClip.getContents(this);
+		Transferable trans = this.sysClip.getContents(this);
 		regainOwnership(trans);
 		// System.out.println("Listening to board...");
 		while (true) {
-			if (isOver())
+			if (isOver()) {
 				break;
+			}
 		}
 		// System.out.println("No more Listening...");
 	}
@@ -58,25 +58,25 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 	 * listening is turned off.
 	 */
 	public void resumeListening() {
-		listening = true;
+		this.listening = true;
 	}
 
 	/**
 	 * Prevents the listener from detecting clipboard changes.
 	 */
 	public void pauseListening() {
-		listening = false;
+		this.listening = false;
 	}
 
 	/**
 	 * Signals the thread to join.
 	 */
 	public void end() {
-		end = true;
+		this.end = true;
 	}
 
 	private boolean isOver() {
-		return end;
+		return this.end;
 	}
 
 	@Override
@@ -97,12 +97,13 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 
 	private void processContents(Transferable t) {
 
-		if (!listening)
+		if (!this.listening) {
 			return;
+		}
 
 		try {
 			Object o = t.getTransferData(DataFlavor.stringFlavor);
-			if (!o.equals(prevVal)) {
+			if (!o.equals(this.prevVal)) {
 				notifyListeners((String) o);
 			}
 		} catch (Exception e) {
@@ -111,37 +112,37 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 	}
 
 	private void regainOwnership(Transferable t) {
-		sysClip.setContents(t, this);
+		this.sysClip.setContents(t, this);
 		processContents(t);
 	}
 
 	/**
 	 * Adds an <code>ActionListener</code> to the monitor.
-	 * 
+	 *
 	 * @param l
 	 *            the <code>ActionListener</code> to be added
 	 */
 	public void addActionListener(ActionListener l) {
-		listeners.add(l);
+		this.listeners.add(l);
 	}
 
 	/**
 	 * Removes an <code>ActionListener</code> to the monitor.
-	 * 
+	 *
 	 * @param l
 	 *            the <code>ActionListener</code> to be removed
 	 */
 	public void removeActionListener(ActionListener l) {
-		listeners.remove(l);
+		this.listeners.remove(l);
 	}
 
 	private void notifyListeners(String s) {
 
-		synchronized (listeners) {
-			for (int i = 0; i < listeners.size(); i++)
-				listeners.get(i).actionPerformed(
-						new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
-			prevVal = s;
+		synchronized (this.listeners) {
+			for (int i = 0; i < this.listeners.size(); i++) {
+				this.listeners.get(i).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
+			}
+			this.prevVal = s;
 		}
 	}
 }
