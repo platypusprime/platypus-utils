@@ -22,250 +22,132 @@ import java.util.ArrayList;
  * <p>
  * Irregular behavior can occur if multiple <code>ClipboardMonitor</code>
  * threads run concurrently.
-<<<<<<< HEAD
  *
  * @author Jingchen Xu
  */
 public class ClipboardMonitor extends Thread implements ClipboardOwner {
 
-	private final Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
-	private boolean end = false;
-	private boolean listening = false;
-	private String prevVal = "";
+    private Clipboard sysClip = Toolkit.getDefaultToolkit()
+            .getSystemClipboard();
 
-	private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private boolean end = false;
 
-	// TODO change to singleton
+    private boolean listening = false;
 
-	public ClipboardMonitor() {
-		super();
-	}
+    private String prevVal = "";
 
-	@Override
-	public void run() {
-		Transferable trans = this.sysClip.getContents(this);
-		regainOwnership(trans);
-		// System.out.println("Listening to board...");
-		while (true) {
-			if (isOver()) {
-				break;
-			}
-		}
-		// System.out.println("No more Listening...");
-	}
+    private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
-	/**
-	 * Allows the listener to begin detecting clipboard changes. By default,
-	 * listening is turned off.
-	 */
-	public void resumeListening() {
-		this.listening = true;
-	}
+    // TODO change to singleton
 
-	/**
-	 * Prevents the listener from detecting clipboard changes.
-	 */
-	public void pauseListening() {
-		this.listening = false;
-	}
+    public ClipboardMonitor() {
+        super();
+    }
 
-	/**
-	 * Signals the thread to join.
-	 */
-	public void end() {
-		this.end = true;
-	}
+    @Override
+    public void run() {
+        Transferable trans = sysClip.getContents(this);
+        regainOwnership(trans);
+        // System.out.println("Listening to board...");
+        while (true) {
+            if (isOver())
+                break;
+        }
+        // System.out.println("No more Listening...");
+    }
 
-	private boolean isOver() {
-		return this.end;
-	}
+    /**
+     * Allows the listener to begin detecting clipboard changes. By default,
+     * listening is turned off.
+     */
+    public void resumeListening() {
+        listening = true;
+    }
 
-	@Override
-	public void lostOwnership(Clipboard c, Transferable t) {
-		try {
-			sleep(200);
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			Transferable contents = c.getContents(this); // EXCEPTION
-			processContents(contents);
-			regainOwnership(contents);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Prevents the listener from detecting clipboard changes.
+     */
+    public void pauseListening() {
+        listening = false;
+    }
 
-	private void processContents(Transferable t) {
+    /**
+     * Signals the thread to join.
+     */
+    public void end() {
+        end = true;
+    }
 
-		if (!this.listening) {
-			return;
-		}
+    private boolean isOver() {
+        return end;
+    }
 
-		try {
-			Object o = t.getTransferData(DataFlavor.stringFlavor);
-			if (!o.equals(this.prevVal)) {
-				notifyListeners((String) o);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void lostOwnership(Clipboard c, Transferable t) {
+        try {
+            sleep(200);
+        }
+        catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
+        try {
+            Transferable contents = c.getContents(this); // EXCEPTION
+            processContents(contents);
+            regainOwnership(contents);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void regainOwnership(Transferable t) {
-		this.sysClip.setContents(t, this);
-		processContents(t);
-	}
+    private void processContents(Transferable t) {
 
-	/**
-	 * Adds an <code>ActionListener</code> to the monitor.
-	 *
-	 * @param l
-	 *            the <code>ActionListener</code> to be added
-	 */
-	public void addActionListener(ActionListener l) {
-		this.listeners.add(l);
-	}
+        if (!listening)
+            return;
 
-	/**
-	 * Removes an <code>ActionListener</code> to the monitor.
-	 *
-	 * @param l
-	 *            the <code>ActionListener</code> to be removed
-	 */
-	public void removeActionListener(ActionListener l) {
-		this.listeners.remove(l);
-	}
+        try {
+            Object o = t.getTransferData(DataFlavor.stringFlavor);
+            if (!o.equals(prevVal)) {
+                notifyListeners((String) o);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void notifyListeners(String s) {
+    private void regainOwnership(Transferable t) {
+        sysClip.setContents(t, this);
+        processContents(t);
+    }
 
-		synchronized (this.listeners) {
-			for (int i = 0; i < this.listeners.size(); i++) {
-				this.listeners.get(i).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
-			}
-			this.prevVal = s;
-=======
- * 
- * @author Jingchen Xu
- */
-public class ClipboardMonitor extends Thread implements ClipboardOwner {
+    /**
+     * Adds an <code>ActionListener</code> to the monitor.
+     *
+     * @param l
+     *        the <code>ActionListener</code> to be added
+     */
+    public void addActionListener(ActionListener l) {
+        listeners.add(l);
+    }
 
-	private Clipboard sysClip = Toolkit.getDefaultToolkit()
-			.getSystemClipboard();
-	private boolean end = false;
-	private boolean listening = false;
-	private String prevVal = "";
+    /**
+     * Removes an <code>ActionListener</code> to the monitor.
+     *
+     * @param l
+     *        the <code>ActionListener</code> to be removed
+     */
+    public void removeActionListener(ActionListener l) {
+        listeners.remove(l);
+    }
 
-	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private void notifyListeners(String s) {
 
-	// TODO change to singleton
-
-	public ClipboardMonitor() {
-		super();
-	}
-
-	@Override
-	public void run() {
-		Transferable trans = sysClip.getContents(this);
-		regainOwnership(trans);
-		// System.out.println("Listening to board...");
-		while (true) {
-			if (isOver())
-				break;
-		}
-		// System.out.println("No more Listening...");
-	}
-
-	/**
-	 * Allows the listener to begin detecting clipboard changes. By default,
-	 * listening is turned off.
-	 */
-	public void resumeListening() {
-		listening = true;
-	}
-
-	/**
-	 * Prevents the listener from detecting clipboard changes.
-	 */
-	public void pauseListening() {
-		listening = false;
-	}
-
-	/**
-	 * Signals the thread to join.
-	 */
-	public void end() {
-		end = true;
-	}
-
-	private boolean isOver() {
-		return end;
-	}
-
-	@Override
-	public void lostOwnership(Clipboard c, Transferable t) {
-		try {
-			sleep(200);
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-		}
-		try {
-			Transferable contents = c.getContents(this); // EXCEPTION
-			processContents(contents);
-			regainOwnership(contents);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void processContents(Transferable t) {
-
-		if (!listening)
-			return;
-
-		try {
-			Object o = t.getTransferData(DataFlavor.stringFlavor);
-			if (!o.equals(prevVal)) {
-				notifyListeners((String) o);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void regainOwnership(Transferable t) {
-		sysClip.setContents(t, this);
-		processContents(t);
-	}
-
-	/**
-	 * Adds an <code>ActionListener</code> to the monitor.
-	 * 
-	 * @param l
-	 *            the <code>ActionListener</code> to be added
-	 */
-	public void addActionListener(ActionListener l) {
-		listeners.add(l);
-	}
-
-	/**
-	 * Removes an <code>ActionListener</code> to the monitor.
-	 * 
-	 * @param l
-	 *            the <code>ActionListener</code> to be removed
-	 */
-	public void removeActionListener(ActionListener l) {
-		listeners.remove(l);
-	}
-
-	private void notifyListeners(String s) {
-
-		synchronized (listeners) {
-			for (int i = 0; i < listeners.size(); i++)
-				listeners.get(i).actionPerformed(
-						new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
-			prevVal = s;
->>>>>>> branch 'master' of https://github.com/platypusprime/platypus-utils.git
-		}
-	}
+        synchronized (listeners) {
+            for (int i = 0; i < listeners.size(); i++)
+                listeners.get(i).actionPerformed(
+                        new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
+            prevVal = s;
+        }
+    }
 }
