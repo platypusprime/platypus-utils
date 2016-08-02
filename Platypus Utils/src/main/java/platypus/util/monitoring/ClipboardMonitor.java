@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * <p>
  * Irregular behavior can occur if multiple <code>ClipboardMonitor</code>
  * threads run concurrently.
+<<<<<<< HEAD
  *
  * @author Jingchen Xu
  */
@@ -143,6 +144,128 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 				this.listeners.get(i).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
 			}
 			this.prevVal = s;
+=======
+ * 
+ * @author Jingchen Xu
+ */
+public class ClipboardMonitor extends Thread implements ClipboardOwner {
+
+	private Clipboard sysClip = Toolkit.getDefaultToolkit()
+			.getSystemClipboard();
+	private boolean end = false;
+	private boolean listening = false;
+	private String prevVal = "";
+
+	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+
+	// TODO change to singleton
+
+	public ClipboardMonitor() {
+		super();
+	}
+
+	@Override
+	public void run() {
+		Transferable trans = sysClip.getContents(this);
+		regainOwnership(trans);
+		// System.out.println("Listening to board...");
+		while (true) {
+			if (isOver())
+				break;
+		}
+		// System.out.println("No more Listening...");
+	}
+
+	/**
+	 * Allows the listener to begin detecting clipboard changes. By default,
+	 * listening is turned off.
+	 */
+	public void resumeListening() {
+		listening = true;
+	}
+
+	/**
+	 * Prevents the listener from detecting clipboard changes.
+	 */
+	public void pauseListening() {
+		listening = false;
+	}
+
+	/**
+	 * Signals the thread to join.
+	 */
+	public void end() {
+		end = true;
+	}
+
+	private boolean isOver() {
+		return end;
+	}
+
+	@Override
+	public void lostOwnership(Clipboard c, Transferable t) {
+		try {
+			sleep(200);
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+		}
+		try {
+			Transferable contents = c.getContents(this); // EXCEPTION
+			processContents(contents);
+			regainOwnership(contents);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processContents(Transferable t) {
+
+		if (!listening)
+			return;
+
+		try {
+			Object o = t.getTransferData(DataFlavor.stringFlavor);
+			if (!o.equals(prevVal)) {
+				notifyListeners((String) o);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void regainOwnership(Transferable t) {
+		sysClip.setContents(t, this);
+		processContents(t);
+	}
+
+	/**
+	 * Adds an <code>ActionListener</code> to the monitor.
+	 * 
+	 * @param l
+	 *            the <code>ActionListener</code> to be added
+	 */
+	public void addActionListener(ActionListener l) {
+		listeners.add(l);
+	}
+
+	/**
+	 * Removes an <code>ActionListener</code> to the monitor.
+	 * 
+	 * @param l
+	 *            the <code>ActionListener</code> to be removed
+	 */
+	public void removeActionListener(ActionListener l) {
+		listeners.remove(l);
+	}
+
+	private void notifyListeners(String s) {
+
+		synchronized (listeners) {
+			for (int i = 0; i < listeners.size(); i++)
+				listeners.get(i).actionPerformed(
+						new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
+			prevVal = s;
+>>>>>>> branch 'master' of https://github.com/platypusprime/platypus-utils.git
 		}
 	}
 }
