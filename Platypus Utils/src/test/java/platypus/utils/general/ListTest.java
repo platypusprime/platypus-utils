@@ -1,4 +1,4 @@
-package platypus.util.testing;
+package platypus.utils.general;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import platypus.util.general.PListUtils;
 
-public class TestLists {
+public class ListTest {
 
 	@Test
 	public void testQuickSort() {
