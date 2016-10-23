@@ -9,26 +9,35 @@ import java.util.Random;
 
 import org.junit.Test;
 
+/**
+ * Tests list utils class.
+ * 
+ * @author Jingchen Xu
+ */
 public class ListTest {
 
-	@Test
-	public void testQuickSort() {
+    /**
+     * Tests quick sort method on a list of random list of integers against the
+     * native sort implementation.
+     */
+    @Test
+    public void testQuickSort() {
 
-		// generate list of random integers
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		Random rand = new Random();
-		for (int i = 0; i < 100000; i++) {
-			list.add(rand.nextInt(10000));
-		}
+        // generate list of random integers
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        Random rand = new Random();
+        for (int i = 0; i < 100000; i++) {
+            list.add(rand.nextInt(10000));
+        }
 
-		// make a copy of the list
-		List<Integer> sList = new ArrayList<Integer>();
-		sList.addAll(list);
+        // make a copy of the list
+        List<Integer> sList = new ArrayList<Integer>();
+        sList.addAll(list);
 
-		// use stock sort
-		Collections.sort(list);
+        // use stock sort
+        Collections.sort(list);
 
-		assertEquals(list, PListUtils.quickSort(sList));
-	}
+        assertEquals(list, PListUtils.quickSort(sList));
+    }
 
 }

@@ -150,7 +150,7 @@ public class PFileUtils {
      * @param file the file to add attributes to
      * @param attributes a map containing all the attribute-value pairs to be
      *        written
-     * @return
+     * @return a map containing the previous values of the keys set
      */
     public static Map<String, String> setUserDefinedFileAttributes(
             File file, Map<String, String> attributes) {
@@ -226,8 +226,7 @@ public class PFileUtils {
                 // add to the map
                 output.put(attribute, value);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -250,8 +249,7 @@ public class PFileUtils {
                 UserDefinedFileAttributeView.class);
         try {
             view.delete(attribute);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -273,8 +271,7 @@ public class PFileUtils {
             for (String attribute : view.list()) {
                 view.delete(attribute);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

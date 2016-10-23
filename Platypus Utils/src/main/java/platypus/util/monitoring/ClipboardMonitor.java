@@ -40,6 +40,9 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
 
     // TODO change to singleton
 
+    /**
+     * Creates a new ClipboardMonitor.
+     */
     public ClipboardMonitor() {
         super();
     }
@@ -86,16 +89,14 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
     public void lostOwnership(Clipboard c, Transferable t) {
         try {
             sleep(200);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
         try {
             Transferable contents = c.getContents(this); // EXCEPTION
             processContents(contents);
             regainOwnership(contents);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -110,8 +111,7 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
             if (!o.equals(prevVal)) {
                 notifyListeners((String) o);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -125,7 +125,7 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
      * Adds an <code>ActionListener</code> to the monitor.
      *
      * @param l
-     *        the <code>ActionListener</code> to be added
+     *            the <code>ActionListener</code> to be added
      */
     public void addActionListener(ActionListener l) {
         listeners.add(l);
@@ -135,7 +135,7 @@ public class ClipboardMonitor extends Thread implements ClipboardOwner {
      * Removes an <code>ActionListener</code> to the monitor.
      *
      * @param l
-     *        the <code>ActionListener</code> to be removed
+     *            the <code>ActionListener</code> to be removed
      */
     public void removeActionListener(ActionListener l) {
         listeners.remove(l);

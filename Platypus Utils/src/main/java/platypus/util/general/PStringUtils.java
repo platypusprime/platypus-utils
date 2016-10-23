@@ -18,9 +18,6 @@ public class PStringUtils {
      * @param s the full, original string
      * @param start the beginning string
      * @param end the ending string
-     * @param firstStart if true the method begins from the first instance of
-     *            <code>start</code> in <code>s</code>, otherwise the method
-     *            searches for the last instance of <code>start</code>
      * @return the substring between the two boundary strings, if they are
      *         valid; returns <code>null</code> if either of the boundary
      *         strings does not exist in <code>s</code> or if the index of
@@ -50,7 +47,7 @@ public class PStringUtils {
      * <code>"1"</code> is returned.
      * 
      * @param s
-     *            the string to be processed
+     *        the string to be processed
      * @return the formatted string
      */
     public static String positiveIntValidation(String s) {
@@ -133,7 +130,7 @@ public class PStringUtils {
             }
             if (cap) {
                 output = output + Character.toString(s.charAt(loop))
-                    .toUpperCase();
+                        .toUpperCase();
                 cap = false;
             } else
                 output = output + Character.toString(s.charAt(loop));
@@ -146,6 +143,13 @@ public class PStringUtils {
     // TODO
     private static String[][] HTML_CODES = { { "", "" }, { "", "" } };
 
+    /**
+     * Converts HTML symbols in a string into their regular string
+     * representations.
+     * 
+     * @param s the string to convert
+     * @return the converted string
+     */
     public static String convertHTMLCodes(String s) {
 
         String output = s;
@@ -172,6 +176,12 @@ public class PStringUtils {
             { "%60", "`" }, { "%7b", "{" }, { "%7c", "|" }, { "%7d", "}" },
             { "%7e", "~" } };
 
+    /**
+     * Converts a URL encoded string into its regular string representation.
+     * 
+     * @param s the string to convert
+     * @return the converted string
+     */
     public static String convertURLCodes(String s) {
 
         String output = s;

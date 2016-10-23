@@ -10,15 +10,13 @@ import java.util.List;
  */
 public class PListUtils {
 
-    private PListUtils() {
-    }
+    private PListUtils() {}
 
     /**
      * Generates a sorted copy of a given list using the quicksort algorithm.
      * The list is sorted in ascending order.
      *
-     * @param <T>
-     * @param <S>
+     * @param <T> the type of object to sort
      * @param list the list to be sort
      * @return a sorted copy of the list
      */
