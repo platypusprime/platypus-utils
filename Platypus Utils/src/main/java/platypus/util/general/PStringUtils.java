@@ -13,33 +13,6 @@ public class PStringUtils {
     private PStringUtils() {}
 
     /**
-     * Returns the substring between two boundary strings.
-     * 
-     * @param s the full, original string
-     * @param start the beginning string
-     * @param end the ending string
-     * @return the substring between the two boundary strings, if they are
-     *         valid; returns <code>null</code> if either of the boundary
-     *         strings does not exist in <code>s</code> or if the index of
-     *         <code>start</code> is greater than that of <code>end</code>
-     */
-    public static String substring(String s, String start, String end) {
-
-        String output = null;
-        if (s.contains(start) && s.contains(end) && s.length() > start.length()
-                && s.length() > end.length()) {
-            int beginIndex = s.indexOf(start) + start.length();
-            int endIndex = s.indexOf(end, beginIndex);
-
-            if (endIndex != -1 && endIndex > beginIndex) {
-                output = s.substring(beginIndex, endIndex);
-            }
-        }
-
-        return output;
-    }
-
-    /**
      * Formats a string such that it is a positive non-zero integer. Takes the
      * substring of the original string before the first <code>'.'</code>
      * character and removes all non-digit characters from that string. If the
@@ -70,7 +43,7 @@ public class PStringUtils {
      * @return a List containing all integers found in the
      *         string; consecutive digits are returned as a single integer
      */
-    public List<Integer> extractIntegers(String s) {
+    public static List<Integer> extractIntegers(String s) {
         List<Integer> output = new ArrayList<Integer>();
         int current;
         boolean add;
@@ -78,7 +51,7 @@ public class PStringUtils {
         for (int loop = 0; loop < s.length(); loop++) {
             current = 0;
             add = false;
-            while (isDigit(Character.toString(s.charAt(loop)))) {
+            while (Character.isDigit(s.charAt(loop))) {
                 current = current * 10
                         + Integer.parseInt(Character.toString(s.charAt(loop)));
                 loop++;
@@ -91,105 +64,69 @@ public class PStringUtils {
     }
 
     /**
-     * Determines whether a string represents a single digit.
-     * 
-     * @param s the string to be evaluated
-     * @return true if s is a single numerical character, false otherwise
+     * Capitalizes the first letters of words in a string. Ignored words can be
+     * specified which will not be capitalized unless they are the first word in
+     * the string.
+     *
+     * @param s the string to be formatted
+     * @param ignoredWords words to not capitalize
+     * @return the formatted version of s
      */
-    public boolean isDigit(String s) {
-        if (s.length() == 1 && s.matches("\\d"))
-            return true;
-        return false;
+    public static String titleFormat(String s, String... ignoredWords) {
+        StringBuilder output = new StringBuilder();
+        char[] charArray = s.toCharArray();
+        int start = 0, end = 0, copy = 0;
+        boolean ignore, firstWord = true;
+
+        while (end < charArray.length) {
+            ignore = false;
+
+            // find the start of a word
+            for (start = end; start < charArray.length; start++) {
+                if (!Character.isWhitespace(charArray[start])) {
+                    break;
+                }
+            }
+
+            // find the end of a word
+            for (end = start; end < charArray.length; end++) {
+                if (Character.isWhitespace(charArray[end])) {
+                    break;
+                }
+            }
+
+            // filter out ignored words
+            String currentWord = s.substring(start, end);
+            for (String word : ignoredWords) {
+                if (currentWord.equalsIgnoreCase(word)) {
+                    ignore = true;
+                    break;
+                }
+            }
+
+            // add to the result
+            for (; copy < end; copy++) {
+                if ((copy == start && !ignore) || (copy == start && firstWord)) {
+                    output.append(Character.toUpperCase(charArray[copy]));
+                } else {
+                    output.append(Character.toLowerCase(charArray[copy]));
+                }
+            }
+
+            firstWord = false;
+        }
+
+        return output.toString();
     }
 
     /**
-     * Capitalizes the first letters of words in a string. Transitive words such
-     * as 'of' or 'and' will not be capitalized.
-     * 
+     * Capitalizes the first letters of words in a string. Ignores transitive
+     * words.
+     *
      * @param s the string to be formatted
      * @return the formatted version of s
      */
-    public String titleFormat(String s) {
-        String output = "";
-        boolean cap = true;
-
-        for (int loop = 0; loop < s.length(); loop++) {
-
-            if (loop != 0) {
-                // TODO substring
-                if (cap && loop < s.length() - 1)
-                    cap = !(s.charAt(loop) == 'o' && s.charAt(loop + 1) == 'f')
-                            && !(s.charAt(loop) == 'i'
-                                    && s.charAt(loop + 1) == 's');
-                if (cap && loop < s.length() - 2)
-                    cap = !(s.charAt(loop) == 't' && s.charAt(loop + 1) == 'h'
-                            && s.charAt(loop + 2) == 'e')
-                            && !(s.charAt(loop) == 'a'
-                                    && s.charAt(loop + 1) == 'n'
-                                    && s.charAt(loop + 2) == 'd');
-            }
-            if (cap) {
-                output = output + Character.toString(s.charAt(loop))
-                        .toUpperCase();
-                cap = false;
-            } else
-                output = output + Character.toString(s.charAt(loop));
-            if (s.charAt(loop) == ' ')
-                cap = true;
-        }
-        return output;
-    }
-
-    // TODO
-    private static String[][] HTML_CODES = { { "", "" }, { "", "" } };
-
-    /**
-     * Converts HTML symbols in a string into their regular string
-     * representations.
-     * 
-     * @param s the string to convert
-     * @return the converted string
-     */
-    public static String convertHTMLCodes(String s) {
-
-        String output = s;
-
-        for (String[] code : HTML_CODES) {
-            output = output.replaceAll(code[0], code[1]);
-        }
-
-        return output;
-    }
-
-    private static String[][] URL_CODES = { { "%20", " " }, { "%21", "!" },
-            { "%22", "\"" },
-            { "%23", "#" }, { "%24", "$" }, { "%25", "%" }, { "%26", "&" },
-            { "%27", "'" },
-            { "%28", "(" }, { "%29", ")" }, { "%2a", "*" }, { "%2b", "+" },
-            { "%2c", "," },
-            { "%2d", "-" }, { "%2e", "." }, { "%2f", "/" }, { "%3a", ":" },
-            { "%3b", ";" },
-            { "%3c", "<" }, { "%3d", "=" }, { "%3e", ">" }, { "%3f", "?" },
-            { "%40", "@" },
-            { "%5b", "[" }, { "%5c", "\\" }, { "%5d", "]" }, { "%5e", "^" },
-            { "%5f", "_" },
-            { "%60", "`" }, { "%7b", "{" }, { "%7c", "|" }, { "%7d", "}" },
-            { "%7e", "~" } };
-
-    /**
-     * Converts a URL encoded string into its regular string representation.
-     * 
-     * @param s the string to convert
-     * @return the converted string
-     */
-    public static String convertURLCodes(String s) {
-
-        String output = s;
-
-        for (String[] code : URL_CODES) {
-            output = output.replaceAll("(?i)" + code[0], code[1]);
-        }
-
-        return output;
+    public static String titleFormatIgnoreTransitive(String s) {
+        return titleFormat(s, "of", "and", "the", "to", "if", "as", "is", "was");
     }
 }
