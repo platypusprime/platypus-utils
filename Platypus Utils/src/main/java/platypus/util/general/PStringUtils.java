@@ -1,6 +1,7 @@
 package platypus.util.general;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public class PStringUtils {
      * substring of the original string before the first <code>'.'</code>
      * character and removes all non-digit characters from that string. If the
      * resulting string represents a valid integer, it is returned; otherwise,
-     * <code>"1"</code> is returned.
+     * the string <code>"1"</code> is returned.
      * 
      * @param s
      *        the string to be processed
@@ -25,12 +26,15 @@ public class PStringUtils {
      */
     public static String positiveIntValidation(String s) {
 
-        String content = "0" + s.split("\\.")[0].replaceAll("[\\D]", "");
+        if (s == null || s.isEmpty()) {
+            return "1";
+        }
 
-        int value = Integer.parseInt(content);
+        String digits = "0" + s.split("\\.")[0].replaceAll("[\\D]", "");
+        digits = digits.replaceFirst("0*", "");
 
-        if (value > 0) {
-            return Integer.toString(value);
+        if (!digits.isEmpty()) {
+            return digits;
         } else {
             return "1";
         }
@@ -44,6 +48,13 @@ public class PStringUtils {
      *         string; consecutive digits are returned as a single integer
      */
     public static List<Integer> extractIntegers(String s) {
+
+        if (s == null) {
+            return null;
+        } else if (s.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<Integer> output = new ArrayList<Integer>();
         int current;
         boolean add;
@@ -73,6 +84,11 @@ public class PStringUtils {
      * @return the formatted version of s
      */
     public static String titleFormat(String s, String... ignoredWords) {
+
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+
         StringBuilder output = new StringBuilder();
         char[] charArray = s.toCharArray();
         int start = 0, end = 0, copy = 0;
