@@ -92,19 +92,4 @@ public class PListUtils {
         list.set(j, store);
     }
 
-    /**
-     * Finds a single index of an element within a list using a binary search.
-     * The provided list must be sorted in ascending order.
-     *
-     * @param list the sorted list to be searched
-     * @param query the object to search for
-     * @return the index of a matching element in the list. If the query is not
-     *         found, -1 is returned instead.
-     */
-    public static int binSearch(List<Comparable<Object>> list,
-            Comparable<Object> query) {
-        // TODO
-        return -1;
-    }
-
 }
