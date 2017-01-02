@@ -16,12 +16,11 @@ public class PListUtils {
      * Generates a sorted copy of a given list using the quicksort algorithm.
      * The list is sorted in ascending order.
      *
-     * @param <T> the type of object to sort
+     * @param <T> the type of the list elements
      * @param list the list to be sort
      * @return a sorted copy of the list
      */
-    public static <T extends Comparable<T>> List<T> quickSort(
-            List<T> list) {
+    public static <T extends Comparable<T>> List<T> quickSort(List<T> list) {
 
         if (list == null || list.size() == 0)
             return null;
@@ -39,13 +38,12 @@ public class PListUtils {
      * elements from index low to high are sorted in ascending order. The
      * remaining elements remain in the order given.
      *
-     * @param <T>
+     * @param <T> the type of the list elements
      * @param list the list to sort
      * @param low the bottom index of the partition to be sorted (inclusive)
      * @param high the upper index of the partition to be sorted (inclusive)
      */
-    public static <T extends Comparable<T>> void quickSort(
-            List<T> list, int low, int high) {
+    public static <T extends Comparable<T>> void quickSort(List<T> list, int low, int high) {
 
         int i = low, j = high;
         T pivot = list.get(low + (high - low) / 2);
@@ -80,13 +78,12 @@ public class PListUtils {
     /**
      * Swaps two elements of a list in place.
      *
-     * @param <T>
+     * @param <T> the type of the list elements
      * @param list the list to manipulate
      * @param i the index of the first element to be swapped
      * @param j the index of the second element to be swapped
      */
     public static <T> void swap(List<T> list, int i, int j) {
-
         T store = list.get(i);
         list.set(i, list.get(j));
         list.set(j, store);
